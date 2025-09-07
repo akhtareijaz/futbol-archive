@@ -32,7 +32,7 @@ PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "https://akhtar-eijaz-futbolarchive.pbp.cs.ui.ac.id/"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "akhtar-eijaz-futbolarchive.pbp.cs.ui.ac.id"]
 
 
 # Application definition
