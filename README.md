@@ -1,5 +1,8 @@
 Web : https://akhtar-eijaz-futbolarchive.pbp.cs.ui.ac.id/
 
+<details>
+<Summary><b>Tugas 2</b></Summary>
+
 Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
 
 Membuat sebuah proyek Django baru : Membuat direktori baru untuk Football Shop, untuk Football Shop saya menamakan dengan nama futbol-archive, lalu masuk ke dalam direktori tersebut lalu buka terminal, buat virtual environment dengan menjalankan perintah python -m venv env, mengaktifkan virtual environment dengan perintah env\Scripts\activate, buat berkas requirements.txt yang isinya adalah dependencies di direktori Football Shop yang telah dibuat, install dependencies dengan cara menjalankan perintah pip install -r requirements.txt, buat proyek Django dengan perintah django-admin startproject futbol_archive .
@@ -96,3 +99,34 @@ Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan 
 
 
 Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya : Tidak, tutorial 1 sudah cukup jelas dan mudah dimengerti
+
+</details>
+
+<details>
+<Summary><b>Tugas 3</b></Summary>
+
+Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Kita memerlukan data delivery karena data delivery mempunyai banyak manfaat, diantaranya data delivery mempunyai akses yang cepat dan real time dan data delivery memastikan semua data tidak hilang walaupun ada kendala error dan sebagainya. Tanpa data delivery sebuah platform akan susah berkembang karena data yang dikirim bisa telat, hilang, atau tidak sinkron.
+
+Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+Menurutku JSON karena kalau menulis XML relatif lebih panjang karena tiap elemen butuh tag pembuka dan penutup, sedangkan JSON dapat ditulis secara ringkas seperti dictionary di Python. JSON lebih populer mungkin karena hampir semua API publik seperti Twitter, Spotify, Maps defaultnya memakai JSON dan JSON dapat langsung dipakai di JavaScript tanpa parsing yang terlalu ribet.
+
+Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+Method is_valid() adalah method bawaan dari Django yang biasanya dipakai untuk memvalidasi data input yang dikirim user dan method ini akan memeriksa apakah semua field sudah terisi atau belum dan apakah sesuai tipe datanya masing-masing. Kita membutuhkan method is_valid() karena untuk mencegah input user yang formatnya salah. Method is_valid() juga akan mereturn boolean yang jika return True artinya semua datanya valid tapi ketika return False maka ada data yang tidak valid.
+
+Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+csrf_token adalah token keamanan yang dipakai oleh Django untuk melindungi form dari serangan CSRF (Cross-Site Request Forgery). Jika kita tidak menambahkan csrf_token pada form Django maka Django akan menolak request POST dan akan menampilkan error. Hal itu dapat dimanfaatkan oleh penyerang dengan cara memaksa browser korban melakukan aksi atas nama korban tanpa mengetahui password selama korban sedang mengakses website target.
+
+Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+Pertama-tama di dalam views.py menambahkan fungsi baru untuk melihat objek dalam format XML, JSON, XML by ID, dan JSON by ID. Membuat routing di urls.py dengan menambah elemen di list urlpatterns dan mengimport fungsi yang telah dibuat sebelumnya. Lalu pada templates menambahkan file html yang bernama create_product.html dan product_detail.html untuk membuat halaman ketika membuat produk baru dan menampilkan detail dari produk. Memodifikasi main.html juga untuk menghubungkan main.html dengan file html lainnya. Aku juga menambahkan list CATEGORY_CHOICES untuk membagi kategori produk yang dijual.
+
+Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
+Tidak tutorial 2 mudah untuk dipahami
+
+Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman, dan menambahkannya ke dalam README.md.
+![XML](image-1.png)
+![JSON](image-2.png)
+![JSON by ID](image-3.png)
+![XML by ID](image-4.png)
+
+</details>
