@@ -130,3 +130,47 @@ Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari has
 ![XML by ID](image-4.png)
 
 </details>
+
+<details>
+<Summary><b>Tugas 4</b></Summary>
+
+Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+AuthenticationForm adalah form bawaan Django yang dipakai untuk proses login user. Form ini sudah ada di modul django.contrib.auth.forms.
+Secara default, AuthenticationForm menyimpan 2 field, yaitu username dan password.
+Kelebihan dari AuthenticationForm adalah sudah terintegrasi dengan sistem autentikasi Django, sehingga memudahkan dalam proses login user dan tidak perlu bikin form login dari nol. Kekurangannya adalah kurang fleksibel karena hanya menyediakan field username dan password saja, sehingga jika ingin menambahkan field lain harus membuat form sendiri.
+
+Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+Autentikasi adalah proses verifikasi identitas user, apakah user itu valid atau tidak, sedangkan otorisasi adalah memastikan user yang valid dapat melakukan aksi. Django mengimplementasikan autentikasi dengan sistem login dan logout, sedangkan otorisasi diimplementasikan dengan sistem permission dan group.
+
+Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+Session = data user disimpan di server (server-side), sementara browser hanya pegang session ID (biasanya di cookie atau URL parameter).
+Cookies = data kecil yang disimpan di browser (client-side), dan dikirim ke server pada setiap request HTTP ke domain terkait.
+Kelebihan session adalah data disimpan di server, bukan di client dan hanya session ID yang dikirim sehingga lebih aman. Kekurangan session adalah memerlukan storage di server sehingga bisa membebani server jika banyak user. Kelebihan cookies adalah sederhana sehingga data langsung ada di browser dan dapat dipakai lintas domain. Kekurangan cookies adalah data disimpan di client sehingga rentan terhadap serangan dan dapat dilihat atau diedit oleh user.
+
+Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+Secara default, cookies tidak aman karena bisa diakses dan diedit oleh user. Risiko potensial yang harus diwaspadai antara lain, XSS (Cross-Site Scripting) dan CSRF (Cross-Site Request Forgery). Django menangani hal tersebut dengan menyediakan fitur HttpOnly cookies yang tidak bisa diakses oleh JavaScript, Secure cookies yang hanya dikirim melalui HTTPS, dan CSRF protection untuk melindungi dari serangan CSRF seperti menambahkan csrf_token di form.
+
+Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+1. Membuat fungsi dan form untuk login, logout, dan register dengan menggunakan AuthenticationForm dari django.contrib.auth.forms. 
+2. Membuat view untuk menangani proses login dan logout user.
+3. Membuat routing di urls.py untuk menghubungkan URL dengan view yang telah dibuat.
+4. Membuat berkas HTML untuk login dan register.
+5. Menambahkan potongan kode @login_required(login_url='/login') pada show_main dan show_product sehingga yang dapat mengakses hanya user yang sudah login.
+6. Menggunakan data dari cookies dengan cara menampilkan kapan terakhir user login dengan cara mengubah kode di fungsi login_user seperti,
+if form.is_valid():
+    user = form.get_user()
+    login(request, user)
+    response = HttpResponseRedirect(reverse("main:show_main"))
+    response.set_cookie('last_login', str(datetime.datetime.now()))
+    return response
+dan menambahkan kode 'last_login': request.COOKIES['last_login'] pada context di fungsi show_main. Lalu mengubah fungsi logout_user seperti,
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+Fungsi ini untuk menghapus cookie last_login dari daftar cookies.
+7. Menghubungkan model Product dengan user agar setiap user hanya dapat melihat produk yang dibuat sendiri dengan menambahkan user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) pada model Product dan buat file migrasi model dengan python manage.py makemigration dan menjalankan migrasi model dengan python manage.py migrate
+8. Menjalankan server lokal dan register 2 user lalu membuat 3 produk di masing-masing user.
+
+</details>
