@@ -174,3 +174,71 @@ Fungsi ini untuk menghapus cookie last_login dari daftar cookies.
 8. Menjalankan server lokal dan register 2 user lalu membuat 3 produk di masing-masing user.
 
 </details>
+
+<details>
+<Summary><b>Tugas 5</b></Summary>
+
+Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+Urutan prioritas pengambilan CSS selector adalah sebagai berikut:
+1. Inline styles (menggunakan atribut style di elemen HTML)
+2. ID selectors (menggunakan tanda # diikuti dengan ID elemen)
+3. Class selectors (menggunakan tanda . diikuti dengan nama class)
+4. Attribute selectors (menggunakan tanda [] untuk memilih elemen berdasarkan atribut)
+5. Element selectors (menggunakan nama elemen HTML seperti div, p)
+
+
+Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+Responsive design adalah pendekatan desain web agar tampilan aplikasi bisa menyesuaikan diri dengan berbagai ukuran layar (HP, tablet, laptop). Beberapa alasan pentingnya, antara lain:
+1. Pengalaman pengguna (UX) – pengguna HP tidak harus zoom in/scroll horizontal untuk membaca konten.
+2. Aksesibilitas – semua orang bisa mengakses dengan nyaman
+3. SEO (Search Engine Optimization) – Google memberi ranking lebih tinggi pada website yang mobile-friendly.
+Contoh aplikasi yang sudah menerapkan responsive design: 
+1. YouTube - tampilan player, rekomendasi, dan komentar berubah sesuai layar.
+2. Tokopedia - grid produk menyesuaikan lebar layar.
+Contoh aplikasi yang belum menerapkan responsive design:
+1. Situs berita lama - teks terlalu kecil di HP jadi harus zoom manual dan tombol terkadang susah untuk di klik.
+2. Situs pemerintah - beberapa masih menggunakan layout tetap yang tidak menyesuaikan layar kecil.
+
+
+Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+1. Margin
+- Area di luar border elemen → memberi jarak antara elemen dengan elemen lain.
+- Transparan (tidak punya warna).
+- Digunakan untuk mengatur spasi antar elemen.
+2. Border
+- Batas tepi elemen → garis yang membungkus konten dan padding.
+- Bisa diatur ketebalan, gaya, dan warnanya.
+- Letaknya di antara padding dan margin
+3. Padding
+- Ruang antara konten dan border elemen.
+- Mendorong isi (teks/gambar) ke dalam agar tidak menempel ke border.
+- Juga transparan, tapi memengaruhi ukuran elemen.
+Cara implementasi :
+```css
+.box {
+    margin: 10px; /* jarak luar 10 pixel di semua sisi */
+    border: 2px red; /* garis merah 2 pixel */
+    padding: 15px; /* jarak dalam 15 pixel */
+}
+```
+
+Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+1. Flexbox
+- Layout satu dimensi (baris atau kolom).
+- Mengatur elemen dalam satu baris atau kolom dengan mudah.
+Kegunaan: membuat navbar, tombol yang rata, atau daftar item yang fleksibel.
+2. Grid Layout
+- Layout dua dimensi (baris dan kolom).
+- Membagi area menjadi baris dan kolom untuk menempatkan elemen.
+Kegunaan: membuat tata letak halaman kompleks seperti dashboard atau galeri gambar.
+
+Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+1. Menambahkan fungsi edit_product, delete_product di views.py dan import kedua fungsi tersebut di urls.py dan tambahkan path urlnya.
+2. Menambahkan berkas html baru navbar.html untuk menavigasi berbagai halaman atau fitur di webnya.
+3. Membuat file CSS baru di dalam direktori static/main dengan nama global.css
+4. Menambahkan custom styling ke global.css
+5. Menghubungkan global.css ke semua berkas html
+
+
+
+</details>
