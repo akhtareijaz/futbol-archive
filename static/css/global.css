@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'TypeMachine';
+  src: url('/static/font/TypeMachine.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .form-style form input, form textarea, form select {
     width: 100%;
     padding: 0.5rem;
@@ -44,4 +51,8 @@
     outline: none;
     border-color: #16a34a;
     box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.futbol-font {
+  font-family: 'TypeMachine', sans-serif;
 }

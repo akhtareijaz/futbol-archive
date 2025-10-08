@@ -14,33 +14,10 @@
       </div>
 
       <!-- Form Errors Display -->
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <div id="form-errors"></div>
 
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>{{ field|title }}:</strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-6">
+      <form id="loginForm" method="POST" action="" class="space-y-6">
         {% csrf_token %}
-        
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
           <input 
@@ -65,31 +42,14 @@
 
         <button 
           type="submit" 
+          id="loginBtn"
           class="w-full bg-green-600 text-white font-medium py-3 px-4 rounded-md hover:bg-green-700 transition-colors">
           Sign In
         </button>
       </form>
 
       <!-- Messages Display -->
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded-md text-sm border
-                {% if message.tags == 'success' %}
-                  bg-green-50 border-green-200 text-green-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <div id="messages"></div>
 
       <div class="mt-6 text-center pt-6 border-t border-gray-200">
         <p class="text-gray-500 text-sm">
@@ -102,4 +62,40 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();  // Menghindari form untuk submit secara tradisional
+
+    const formData = new FormData(this);  // Ambil semua data dari form
+    const loginBtn = document.getElementById('loginBtn');
+
+    // Disable tombol selama proses pengiriman
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = 'Logging in...';
+
+    fetch("{% url 'main:login' %}", {  // Ganti dengan URL yang sesuai untuk login
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      const messages = document.getElementById('messages');
+      if (data.success) {
+        window.location.href = "/";  // Redirect ke halaman utama setelah login sukses
+      } else {
+        messages.innerHTML = `<div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">${data.error}</div>`;
+      }
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = 'Sign In';
+    })
+    .catch(error => {
+      console.error("Error during login:", error);
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = 'Sign In';
+      alert("Something went wrong, please try again later.");
+    });
+  });
+</script>
+
 {% endblock content %}

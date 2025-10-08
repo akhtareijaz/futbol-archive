@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block meta %}
 <title>Create Product - Futbol Archive</title>
 {% endblock meta %}
@@ -21,7 +22,7 @@
         <p class="text-gray-600">Add details about your new product to share it with the community</p>
       </div>
       
-      <form method="POST" class="space-y-6">
+      <form id="createProductForm" method="POST" class="space-y-6">
         {% csrf_token %}
         {% for field in form %}
           <div>
@@ -44,7 +45,7 @@
           <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center">
             Cancel
           </a>
-          <button type="submit" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors">
+          <button type="submit" id="createProductBtn" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors">
             Add Product
           </button>
         </div>
@@ -52,4 +53,40 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById('createProductForm').addEventListener('submit', function(e) {
+    e.preventDefault();  // Menghindari form untuk submit secara tradisional
+
+    const formData = new FormData(this);  // Ambil semua data dari form
+    const createBtn = document.getElementById('createProductBtn');
+
+    // Disable tombol selama proses pengiriman
+    createBtn.disabled = true;
+    createBtn.innerHTML = 'Creating product...';
+
+    fetch("{% url 'main:create_product' %}", {  // Ganti dengan URL yang sesuai di Django
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Product created successfully!');
+        window.location.href = "{% url 'main:show_main' %}";  // Redirect ke halaman produk
+      } else {
+        alert('Failed to create product');
+      }
+      createBtn.disabled = false;
+      createBtn.innerHTML = 'Add Product';
+    })
+    .catch(error => {
+      console.error('Error during product creation:', error);
+      createBtn.disabled = false;
+      createBtn.innerHTML = 'Add Product';
+      alert('Something went wrong, please try again later.');
+    });
+  });
+</script>
+
 {% endblock %}

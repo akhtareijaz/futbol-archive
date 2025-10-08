@@ -138,7 +138,7 @@ LANGUAGE_CODE = 'id-ID'
 
 USE_L10N = True
 
-TIME_ZONE = 'WIB'
+TIME_ZONE = 'Asia/Jakarta'
 
 USE_I18N = True
 

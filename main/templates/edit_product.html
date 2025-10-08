@@ -23,7 +23,7 @@
         <p class="text-gray-600">Update your football product</p>
       </div>
       
-      <form method="POST" class="space-y-6">
+      <form id="editProductForm" method="POST" class="space-y-6">
         {% csrf_token %}
         {% for field in form %}
           <div>
@@ -46,7 +46,7 @@
           <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center">
             Cancel
           </a>
-          <button type="submit" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors">
+          <button type="submit" id="updateProductBtn" class="order-1 sm:order-2 flex-1 bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors">
             Update Product
           </button>
         </div>
@@ -54,4 +54,42 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById('editProductForm').addEventListener('submit', function(e) {
+    e.preventDefault();  // Menghindari form untuk submit secara tradisional
+
+    const formData = new FormData(this);  // Ambil semua data dari form
+    const updateBtn = document.getElementById('updateProductBtn');
+
+    // Disable tombol selama proses pengiriman
+    updateBtn.disabled = true;
+    updateBtn.innerHTML = 'Updating product...';
+
+    const productId = "{{ product.id }}";  // Menggunakan product ID yang dikirimkan di context Django
+
+    fetch(`/update-product/${productId}/`, {  // Ganti dengan URL yang sesuai untuk update
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Product updated successfully!');
+        window.location.href = "{% url 'main:show_main' %}";  // Redirect ke halaman produk
+      } else {
+        alert('Failed to update product');
+      }
+      updateBtn.disabled = false;
+      updateBtn.innerHTML = 'Update Product';
+    })
+    .catch(error => {
+      console.error('Error during product update:', error);
+      updateBtn.disabled = false;
+      updateBtn.innerHTML = 'Update Product';
+      alert('Something went wrong, please try again later.');
+    });
+  });
+</script>
+
 {% endblock %}
