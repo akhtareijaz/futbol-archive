@@ -15,9 +15,9 @@
       </div>
 
       <!-- Form Errors Display -->
-      <div id="form-errors"></div>
+      <div id="error-container"></div>
 
-      <form id="registerForm" method="POST" action="" class="space-y-5">
+      <form id="register-form" class="space-y-5">
         {% csrf_token %}
         
         <div>
@@ -54,8 +54,7 @@
         </div>
 
         <button 
-          type="submit" 
-          id="registerBtn"
+          type="submit"
           class="w-full bg-green-600 text-white font-medium py-3 px-4 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200">
           Create Account
         </button>
@@ -78,38 +77,36 @@
 </div>
 
 <script>
-  document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();  // Menghindari form untuk submit secara tradisional
-
-    const formData = new FormData(this);  // Ambil semua data dari form
-    const registerBtn = document.getElementById('registerBtn');
-
-    // Disable tombol selama proses pengiriman
-    registerBtn.disabled = true;
-    registerBtn.innerHTML = 'Creating Account...';
-
-    fetch("{% url 'main:register' %}", {  // Ganti dengan URL yang sesuai untuk registrasi
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-      const messages = document.getElementById('messages');
-      if (data.success) {
-        window.location.href = "/";  // Redirect ke halaman utama setelah registrasi sukses
-      } else {
-        messages.innerHTML = `<div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">${data.error}</div>`;
-      }
-      registerBtn.disabled = false;
-      registerBtn.innerHTML = 'Create Account';
-    })
-    .catch(error => {
-      console.error("Error during registration:", error);
-      registerBtn.disabled = false;
-      registerBtn.innerHTML = 'Create Account';
-      alert("Something went wrong, please try again later.");
-    });
-  });
+document.getElementById("register-form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const errorContainer = document.getElementById("error-container");
+    errorContainer.innerHTML = '';
+    try {
+        const response = await fetch({% url 'main:register_ajax' %}, { 
+            method: "POST", 
+            body: formData 
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+            showToast('Success!', data.message, 'success');
+            setTimeout(() => { window.location.href = "{% url 'main:login' %}"; }, 1500);
+        } else if (data.errors) {
+            for (const field in data.errors) {
+                data.errors[field].forEach(error => {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700';
+                    errorDiv.textContent = `${field.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())}: ${error}`;
+                    errorContainer.appendChild(errorDiv);
+                });
+            }
+        }
+    } catch (error) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700';
+        errorDiv.textContent = 'An unexpected error occurred. Please try again.';
+        errorContainer.appendChild(errorDiv);
+    }
+});
 </script>
-
 {% endblock content %}

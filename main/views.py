@@ -1,5 +1,6 @@
 import datetime
 from django.contrib.auth.decorators import login_required
+from django.forms import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -19,39 +20,12 @@ def logout_user(request):
     return response
 
 def login_user(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-
-            response = JsonResponse({'success': True, 'redirect_url': reverse("main:show_main")})
-            response.set_cookie('last_login', str(datetime.datetime.now()))
-            return response
-        
-        return JsonResponse({'success': False, 'error': 'Invalid username or password'})
-
-    else:
-        form = AuthenticationForm()
-    
-    context = {'form': form}
-    return render(request, 'login.html', context)
+    form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
 def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True, 'message': 'Your account has been successfully created!'})
-        else:
-            return JsonResponse({'success': False, 'error': form.errors.as_json()})
-
-    else:
-        form = UserCreationForm()
-    
-    context = {'form': form}
-    return render(request, 'register.html', context)
+    form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -208,6 +182,7 @@ def add_product_entry_ajax(request):
     return HttpResponse(b"CREATED", status=201)
 
 @csrf_exempt
+@login_required
 def edit_product_ajax(request, id):
     product = get_object_or_404(Product, pk=id)
     if request.method == "POST":
@@ -215,14 +190,77 @@ def edit_product_ajax(request, id):
         if form.is_valid():
             updated = form.save()
             return JsonResponse({
-                "id": str(updated.id),
                 "name": updated.name,
-                "brand": updated.brand,
+                "description": updated.description,
                 "price": updated.price,
-                "rating": updated.rating,
                 "category": updated.category,
                 "thumbnail": updated.thumbnail,
-                "description": updated.description,
                 "is_featured": updated.is_featured,
             })
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+@login_required
+@csrf_exempt
+def delete_product_ajax(request, id):
+    if request.method == "POST":
+        try:
+            product = Product.objects.get(pk=id, user=request.user)
+            product.delete()
+            return JsonResponse({"success": True})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Product not found"})
+    return JsonResponse({"success": False, "message": "Invalid request"})
+
+@csrf_exempt
+@require_POST
+def register_ajax(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({"status": "success", "message": "Registration successful! You can now log in."}, status=201)
+    else:
+        return JsonResponse({"status": "error", "errors": form.errors}, status=400)
+    
+@csrf_exempt
+@require_POST
+def login_ajax(request):
+    form = AuthenticationForm(data=request.POST)
+    if form.is_valid():
+        user = form.get_user()
+        login(request, user)
+        response = JsonResponse({"status": "success", "message": "Login successful!"})
+        response.set_cookie('last_login', str(datetime.datetime.now()))
+        return response
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid username or password."}, status=401)
+    
+@login_required
+def get_products_json(request):
+    filter_type = request.GET.get("filter")
+
+    if filter_type == "my":
+        products = Product.objects.filter(user=request.user)
+    else:
+        products = Product.objects.all()
+
+    data = [
+        {
+            "pk": product.pk,
+            "fields": {
+                "name": product.name,
+                "price": product.price,
+                "description": product.description,
+                "thumbnail": product.thumbnail,
+                "category": product.get_category_display(),  # 💡 tampilkan "Jerseys", bukan "jersey"
+                "is_featured": product.is_featured,
+                "user": product.user.id if product.user else None,
+            },
+        }
+        for product in products
+    ]
+    return JsonResponse(data, safe=False)
+
+@login_required
+def get_product_by_id_json(request, id):
+    product = get_object_or_404(Product, pk=id)
+    return JsonResponse(model_to_dict(product))
